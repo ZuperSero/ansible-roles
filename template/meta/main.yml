@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: zuperzero
+  description: 
+  role_name: 
+  namespace: zz
+  company: zuperzero
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms: 
+    - name: el
+      version:
+        - 8
+  galaxy_tags: []
+dependencies: []
+
