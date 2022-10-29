@@ -1,0 +1,15 @@
+---
+# Basic
+es_version: 3.4.0
+
+# Server
+
+
+# Directories
+es_conf_path:
+es_home_path:
+
+# Users
+
+
+# SSL
