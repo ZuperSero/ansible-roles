@@ -1,1 +1,34 @@
 ---
+- name: Load OS-specific default variables
+  set_fact:
+    role_default_vars: |
+        {{ lookup('file', '../defaults/' + ansible_facts.distribution + '.yml')|from_yaml }}
+
+- name: debug
+  debug:
+    msg: "{{ ansible_facts.keys() }}"
+- name: debug
+  debug:
+    msg: "{{ ansible_facts.distribution }}"
+- name: debug
+  debug:
+    msg: "{{ ansible_distribution_release }}"
+    
+
+# - name: add elasticsearch repository
+#   apt_repository:
+#     repo: deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
+#     state: absent
+#     filename: elasticsearch
+#     update_cache: true
+
+ 
+
+- name: install elasticsearch
+  include_tasks:
+    file: elasticsearch-install.yml
+    apply:
+      tags:
+        - install
+  tags:
+    - install

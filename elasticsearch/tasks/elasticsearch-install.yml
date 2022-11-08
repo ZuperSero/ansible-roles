@@ -1,0 +1,44 @@
+---
+- name: "{{ ansible_facts.distribution }}: install elasticsearch"
+  block:
+    # # Currently no elasticsearch repo
+    # - name: add key
+    #   apt_key:
+    #     url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    #     state: present
+
+    # - name: add elasticsearch repository
+    #   apt_repository:
+    #     repo: deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main
+    #     state: present
+    #     filename: elasticsearch
+    #     update_cache: true
+
+    # - name: install elasticsearch version {{ es_version }}
+    #   apt:
+    #     name: elasticsearch-{{ es_version }}
+    #     state: present
+  - name: fetch elasticsearch version {{ es_version }}
+    uri:
+      url: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ es_version }}-amd64.deb"
+      dest: /tmp/
+
+  - name: install elasticsearch from deb package
+    apt:
+      deb: /tmp/elasticsearch-{{ es_version }}-amd64.deb
+  when: ansible_facts.distribution == 'Ubuntu'
+
+- name:  "{{ ansible_facts.distribution }}: install elasticsearch"
+  block:
+    - name: enable 
+      yum_repository:
+        name: Elasticsearch
+        description:
+        baseurl: "https://artifacts.elastic.co/packages/{{ es_version }}/yum"
+        gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+    - name: install elasticsearch version {{ es_version }}
+      yum:
+        name: "elasticsearch-{{ es_version }}"
+        state: present
+  when: ansible_facts.distribution == 'RedHat'

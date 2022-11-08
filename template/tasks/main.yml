@@ -1,1 +1,5 @@
 ---
+- name: Load OS-specific default variables
+  set_fact:
+    role_default_vars: |
+        {{ lookup('file', '../defaults/' + ansible_facts.distribution + '.yml')|from_yaml }}

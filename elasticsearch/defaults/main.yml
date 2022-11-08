@@ -1,15 +1,29 @@
 ---
 # Basic
-es_version: 3.4.0
+es_version: 3.5.0
+
+
+# Repo
+repo: "{{ role_default_vars['repo'] }}"
 
 # Server
+es_server_host:
+es_server_port:
+
 
 
 # Directories
-es_conf_path:
-es_home_path:
+es_path_home:
+es_path_conf:
+es_path_log:
+es_path_certs:
+es_path_pid:
+
 
 # Users
 
 
 # SSL
+es_ssl_cert:
+es_ssl_key:
+es_ssl_ca:
