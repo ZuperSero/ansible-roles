@@ -1,0 +1,19 @@
+---
+
+- name: apply elasticsearch configuration
+  template:
+    src: elasticsearch.yml.j2
+    dest: "{{ es_path_conf }}/elasticsearch.yml"
+    owner: root
+    group: "{{ es_group }}"
+    mode: "660"
+    force: yes
+
+- name: apply java configuration
+  template:
+    src: jvm.options.j2
+    dest: "{{ es_path_conf }}/jvm.options"
+    owner: root
+    group: "{{ es_group }}"
+    mode: "660"
+    force: yes
