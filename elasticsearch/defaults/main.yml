@@ -1,6 +1,6 @@
 ---
 # Basic
-es_version: 3.5.0
+es_version: 8.5.1
 
 
 # Repo
@@ -8,16 +8,17 @@ repo: "{{ role_default_vars['repo'] }}"
 
 # Server
 es_server_host:
-es_server_port:
+es_server_port: 9200
 
 
 
 # Directories
-es_path_home:
-es_path_conf:
-es_path_log:
-es_path_certs:
-es_path_pid:
+es_path_home: "/usr/share/elasticsearch"
+es_path_conf: "/etc/elasticsearch"
+es_path_log: "/var/log/elasticsearch"
+es_path_certs: "{{ es_path_conf }}/certs"
+es_path_pid: "/var/run/elasticsearch"
+es_path_tmp: "/tmp"
 
 
 # Users

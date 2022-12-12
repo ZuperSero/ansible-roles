@@ -1,0 +1,110 @@
+#################################### Basic ####################################
+
+{% if es_config %}
+{{ es_config | to_nice_yaml(indent=2) }}
+{% endif %}
+
+{% if es_config['cluster.name'] is not defined %}
+cluster.name: elasticsearch
+{% endif %}
+
+{% if es_config['node.name'] is not defined %}
+node.name: {{ inventory_hostname }}
+{% endif %}
+
+{% if es_initial_master_nodes | length > 1 %}
+cluster.initial_master_nodes:
+{% for host in es_initial_master_nodes %}
+  - {{ host }}
+{% endfor %}
+{% endif %}
+
+{% if es_discovery_seed_hosts | length > 1 %}
+discovery.seed_hosts:
+{% for host in es_discovery_seed_hosts %}
+  - {{ host }}
+{% endfor %}
+{% else %}
+discovery.type: single-node
+{% endif %}
+
+#################################### Paths ####################################
+
+# Path to directory containing configuration (this file and logging.yml):
+
+path.data:
+{% for data_dir in es_data_dirs %}
+  - {{ data_dir }}
+{% endfor %}
+
+path.logs: {{ es_log_dir }}
+
+{% if es_path_repo is defined %}
+path.repo: {{ es_path_repo }}
+{% endif %}
+
+{% if es_action_auto_create_index == true %}
+action.auto_create_index: true
+{% elif not es_action_auto_create_index %}
+action.auto_create_index: false
+{% else %}
+action.auto_create_index: {{ es_action_auto_create_index }}
+{% endif %}
+
+#################################### Security ####################################
+{% if es_api_basic_auth_username is defined and es_api_basic_auth_password is defined %}
+xpack.security.enabled: true
+
+{% if es_enable_transport_ssl %}
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: "{{ es_ssl_verification_mode }}"
+{% if es_ssl_keystore is defined %}
+xpack.security.transport.ssl.keystore.path: "{{ es_ssl_keystore }}"
+{% elif es_ssl_key and  es_ssl_certificate %}
+xpack.security.transport.ssl.key: "{{ es_ssl_key }}"
+xpack.security.transport.ssl.certificate: "{{ es_ssl_certificate }}"
+{% if es_ssl_certificate_authority %}
+xpack.security.transport.ssl.certificate_authorities: "{{ es_ssl_certificate_authority }}"
+{% endif %}
+{% endif %}
+{% endif %}
+
+{% if es_enable_http_ssl %}
+xpack.security.http.ssl.enabled: true
+{% if es_ssl_keystore is defined %}
+xpack.security.http.ssl.keystore.path: "{{ es_ssl_keystore }}"
+{% elif es_ssl_key and  es_ssl_certificate %}
+xpack.security.http.ssl.key: "{{ es_ssl_key }}"
+xpack.security.http.ssl.certificate: "{{ es_ssl_certificate }}"
+{% if es_ssl_certificate_authority %}
+xpack.security.http.ssl.certificate_authorities: "{{ es_ssl_certificate_authority }}"
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
+
+{% if es_authc_api %}
+xpack.security.authc.api_key.enabled: {{ es_authc_api }}
+{% endif %}
+
+{% if es_xpack_security_enrollment_enabled %}
+xpack.security.enrollment.enabled: {{ es_xpack_security_enrollment_enabled }}
+{% endif %}
+
+#################################### Email Notifications ####################################
+{% if es_mail_config is defined %}
+xpack.notification.email:
+  account:
+    {{ es_mail_config['account'] }}:
+      profile: {{ es_mail_config['profile'] }}
+      email_defaults:
+        from: {{ es_mail_config['from'] }}
+      smtp:
+        auth: {{ es_mail_config['require_auth'] }}
+        host: {{ es_mail_config['host'] }}
+        port: {{ es_mail_config['port'] }}
+        {% if es_mail_config['require_auth'] == true -%}
+        user: {{ es_mail_config['user'] }}
+        password: {{ es_mail_config['pass'] }}
+        {%- endif %}
+{% endif %}

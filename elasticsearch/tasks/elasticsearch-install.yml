@@ -1,33 +1,29 @@
 ---
+# Install Blocks
+# Ubuntu
 - name: "{{ ansible_facts.distribution }}: install elasticsearch"
   block:
-    # # Currently no elasticsearch repo
-    # - name: add key
-    #   apt_key:
-    #     url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
-    #     state: present
+    - name: Add elasticsearch apt repository key.
+      get_url:
+        url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+        dest: /etc/apt/trusted.gpg.d/elasticsearch.asc
+        mode: '0644'
+        force: true
 
-    # - name: add elasticsearch repository
-    #   apt_repository:
-    #     repo: deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main
-    #     state: present
-    #     filename: elasticsearch
-    #     update_cache: true
+    - name: add elasticsearch repository
+      apt_repository:
+        repo: deb [signed-by=/etc/apt/trusted.gpg.d/elasticsearch.asc] https://artifacts.elastic.co/packages/8.x/apt stable main
+        state: present
+        filename: elasticsearch
+        update_cache: true
 
-    # - name: install elasticsearch version {{ es_version }}
-    #   apt:
-    #     name: elasticsearch-{{ es_version }}
-    #     state: present
-  - name: fetch elasticsearch version {{ es_version }}
-    uri:
-      url: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ es_version }}-amd64.deb"
-      dest: /tmp/
-
-  - name: install elasticsearch from deb package
-    apt:
-      deb: /tmp/elasticsearch-{{ es_version }}-amd64.deb
+    - name: install elasticsearch version {{ es_version }}
+      apt:
+        name: elasticsearch={{ es_version }}
+        state: present
   when: ansible_facts.distribution == 'Ubuntu'
-
+  tags: install
+# RedHat
 - name:  "{{ ansible_facts.distribution }}: install elasticsearch"
   block:
     - name: enable 
@@ -42,3 +38,24 @@
         name: "elasticsearch-{{ es_version }}"
         state: present
   when: ansible_facts.distribution == 'RedHat'
+  tags: install
+
+# Uninstall block
+# Ubuntu
+- name: "Ubuntu: remove elasticsearch"
+  block:
+    - name: "[ Ubuntu ] remove elasticsearch version {{ es_version }}"
+      apt:
+        name: "elasticsearch={{ es_version }}"
+        state: absent
+  when: ansible_facts.distribution == 'Ubuntu'
+  tags: remove
+
+- name: "RedHat: remove elasticsearch"
+  block:
+    - name: "[ RedHat ]remove elasticsearch version {{ es_version }}"
+      yum:
+        name: "elasticsearch-{{ es_version }}"
+        state: absent
+  when: ansible_facts.distribution == 'RedHat'
+  tags: remove

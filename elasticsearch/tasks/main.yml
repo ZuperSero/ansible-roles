@@ -27,8 +27,15 @@
 - name: install elasticsearch
   include_tasks:
     file: elasticsearch-install.yml
-    apply:
-      tags:
-        - install
   tags:
     - install
+    - remove
+
+- name: configure Elasticsearch
+  include_tasks:
+    file: elasticsearch-configure.yml
+    apply:
+      tags:
+        - configure
+  tags:
+    - configure
