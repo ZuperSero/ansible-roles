@@ -1,7 +1,7 @@
 ---
 # Basic
-es_version: 8.5.1
-
+es_version: 8.5.3
+es_config_type: "Manual"
 
 # Repo
 repo: "{{ role_default_vars['repo'] }}"
@@ -9,8 +9,6 @@ repo: "{{ role_default_vars['repo'] }}"
 # Server
 es_server_host:
 es_server_port: 9200
-
-
 
 # Directories
 es_path_home: "/usr/share/elasticsearch"
@@ -22,7 +20,8 @@ es_path_tmp: "/tmp"
 
 
 # Users
-
+es_user: elasticsearch
+es_group: elasticsearch
 
 # SSL
 es_ssl_cert:

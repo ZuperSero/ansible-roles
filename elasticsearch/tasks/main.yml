@@ -14,16 +14,6 @@
   debug:
     msg: "{{ ansible_distribution_release }}"
     
-
-# - name: add elasticsearch repository
-#   apt_repository:
-#     repo: deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
-#     state: absent
-#     filename: elasticsearch
-#     update_cache: true
-
- 
-
 - name: install elasticsearch
   include_tasks:
     file: elasticsearch-install.yml
@@ -39,3 +29,17 @@
         - configure
   tags:
     - configure
+
+- name: start and enable elasticsearch
+  service:
+    name: elasticsearch.service
+    enabled: true
+    state: started
+
+
+# - name: 
+#   uri:
+#     url: https://
+#     method: get
+#     status_code: 200
+#   register: resp

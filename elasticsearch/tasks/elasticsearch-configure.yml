@@ -1,13 +1,26 @@
 ---
 
-- name: apply elasticsearch configuration
+- name: apply elasticsearch configuration, manual
   template:
-    src: elasticsearch.yml.j2
+    src: elasticsearch-manual.yml.j2
     dest: "{{ es_path_conf }}/elasticsearch.yml"
     owner: root
     group: "{{ es_group }}"
     mode: "660"
     force: yes
+  when: es_config_type == "Manual"
+
+- name: apply elasticsearch configuration, automatic
+  template:
+    src: elasticsearch-automatic.yml.j2
+    dest: "{{ es_path_conf }}/elasticsearch.yml"
+    owner: root
+    group: "{{ es_group }}"
+    mode: "660"
+    force: yes
+  when: es_config_type == "Automatic"
+
+
 
 - name: apply java configuration
   template:
